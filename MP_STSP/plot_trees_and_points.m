@@ -32,6 +32,12 @@ function [XY,T] = plot_trees_and_points(nRobots,n_r,n_c,d_r,d_c,required_vertex)
         for i=1:length(XY)
             text(XY(i,1) + 0.3,XY(i,2) + 0.35,int2str(i),'Color', 'b')
         end
+        
+        for i=1:length(T)
+            
+            text(T(i,1) + 0.3,T(i,2) + 0.35,int2str(i),'Color', 'g')
+            
+        end
     
     end
 

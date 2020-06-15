@@ -2,19 +2,24 @@ clear all;
 close all;
 clc;
 
-trees_IDS_to_scan = []
+%% Parse input file
 
-[required_vertex, c_req] = calculateStopsFromTreesIDs(trees_IDS_to_scan);
+fname = 'Mission.json';
+val = jsondecode(fileread(fname));
 
 
-%% USED PARAMETERS (17-02)
-% orchard 9x7
-% planting patter 5x5
-% required_vertex = [10 11 17 18 12 19 26 27 33 34 44 45 51 52 48 49 55 56 62 63]; 
-% nRobots from 1 to 3 (4 is too much..)
-% cplex tolerance 0.5% convergence
-% single stop c =
-% c'è ridondanza....
+n_rows_trees = str2double( struct2array(val.field{1})); 
+n_cols_trees = str2double( struct2array(val.field{2})); 
+delta_rows = str2double( struct2array(val.field{3})); 
+delta_cols = str2double( struct2array(val.field{4}));
+
+trees_IDS_to_scan = str2double(struct2cell(val.trees));
+
+nRobots = str2double(val.nrobots);
+
+
+
+%%
 
 which_solver = 2; %1 for intlinprog, 2 for cplexmilp 
 
@@ -23,16 +28,16 @@ which_solver = 2; %1 for intlinprog, 2 for cplexmilp
 colors = 'kkkkk';
 
 %grid parameters
+n_rows = n_rows_trees + 1; 
+n_cols = n_cols_trees + 1;
 
-n_rows = 5; % 3 
-n_cols = 5; % 4
-
-delta_rows = 5;
-delta_cols = 5;
 
 grid = [delta_rows, delta_cols];
 
-nRobots = 2; %n° robots
+trees_IDS_to_scan = [1 6 5 10];
+
+[required_vertex, c_req, associations] = calculateStopsFromTreesIDs(trees_IDS_to_scan, n_cols);
+
 
 Tmax_cost = 10; %if we push too much the time, the robots tend to split exactly the number of required nodes
 
@@ -49,81 +54,13 @@ nStops = n_rows * n_cols;
 X = zeros(nStops,1); 
 Y = X;
 
-% to have all stops (TSP-like)
-% required_vertex = 2:nStops;
-
-if n_rows == 2
-    
-    required_vertex = [2 3];
-    
-elseif n_rows == 3
-    
-    required_vertex = [6 7 8];
-    
-elseif n_rows == 4
-    
-%   required_vertex = [2 5 7 8 9 10 12];
-%   required_vertex = [8 9 10 12 13 14]; %OK!!
-    required_vertex = [2 6 8 9 10 4 13 14 16];
-    
-    
-elseif n_rows == 5
-    
-    required_vertex = [3 4 8 9 14 15 19 20 25 24];
-
-    c_req = [1 1 1 1 1 1 2 2 1 1];
-
-  
-elseif n_rows == 6
-    
-    required_vertex = [5 6 11 12 26 27 20 21 30 29 35 36];
-    
-elseif n_rows == 9 || n_cols == 9
-    
-%     required_vertex = [31 32 35 36 40 41 44 45 62 63 64 65 71 72 73 74 80 81];
-%       c_req =           [1  1  1  1  1  1  1  1  1  1  1  1  2  2  1  1  1  1];
-    required_vertex = [22 23 30 31 32 39 40 43 44 45 52 53 54 61 62 63]; 
-    c_req =     c1 *  [1  1  1  2  1  1  1  1  2  1  2  4  2  1  2  1];
-    
-elseif n_rows == 10
-    
-%     31--> 1
-%     32--> 1
-%     41--> 1
-%     42--> 1
-%     35--> 1
-%     36--> 1
-%     45--> 1
-%     46--> 1
-%     47--> 1
-%     48--> 1
-%     57--> 1
-%     58--> 1
-%     62--> 1
-%     63--> 2
-%     64--> 1
-%     72--> 1
-%     73--> 2
-%     74--> 1
-%     79--> 1
-%     89--> 2
-%     80--> 1
-%     90--> 2
-%     99--> 1
-%     100--> 1
-    
-    
-    required_vertex = [31 32 41 42 35 36 45 46 62 63 64 72 73 74 79 89 80 90 99 100];
-
-    c_req =           [1  1  1  1  1  1  1  1  1  2  1  1  2  1  1  2  1  2  1  1];
-    
-else
-    
-     required_vertex = [ 24 3 25 7 14 40 13 12 5 28 6 15 49 58 80 75 99 102];
- 
-end
+%%
 
 required_vertex = unique(required_vertex); %eliminates repetitions (if any)
+depot_indices = find(required_vertex == 1);
+required_vertex(depot_indices) = [];%take out depot if present
+c_req(depot_indices) = [];
+
 nRequired = length(required_vertex);
 
 [XY,T] = plot_trees_and_points(nRobots,n_rows,n_cols,delta_rows,delta_cols,required_vertex);
@@ -134,6 +71,9 @@ nRequired = length(required_vertex);
 [delta_plus , delta_minus, Fa] = calculateFlowVariables(nStops,edges_list);
 
 V = calculateSplitVariables(nRequired);
+
+XY_with_IDs = [linspace(1,length(XY),length(XY))' XY];
+T_with_IDs = [linspace(1,length(T),length(T))' T];
 
 
 %increase variable for nRobots
@@ -292,10 +232,6 @@ for i=1:nRobots
     Vri = required_vertex(sol_v(i,:) == 1);
     updatePlot(i,x_tsp((i-1)*edges_len/nRobots +1:i*edges_len/nRobots),edges_list(1:edges_len/nRobots,:),XY,colors(i),Vri);
 
-%     missions_time(i) = c1*sum(sol_v(i,:)) + c2*length(sol_edges{i});
-%     fprintf('Total time for robot # %i\n',i); 
-%     fprintf('%i [sec]\n' , missions_time(i));
-%     
     
     tour{i} = findTour(sol_edges{i},required_vertex,Vri);
 
@@ -305,16 +241,37 @@ for i=1:nRobots
     
 end
 
-%fprintf( 2,'T\n' )
-%fprintf(2,'%i [sec]\n', x_tsp(end));
 
+% Robots heading are given as they arrive to the stop
+% Heading at the depot (stop n°1) has been left as unknown. It has to be given
+% as input param. For now it is equal to the first stop the robots do.
 
+for i=1:nRobots
+
+    tour_with_robot_heading{i} = findRobotHeading(tour{i},n_cols);
+    final_tour{i} = calculateScanningHeading(tour_with_robot_heading{i},associations,XY_with_IDs, T_with_IDs);
+
+end
+
+%% Write solution files
 
 fileID = fopen('edges.txt', 'w');
 for i=1:length(edges_list)
     fprintf(fileID,'(%d, %d),\n', edges_list(i,1)-1,edges_list(i,2)-1);
 end
 fclose(fileID);
+
+% Final tour is composed as:
+% 1 column: path consisting into all the stops the i-th robot has to do
+% 2 column: heading of the robot for each single stop (discretized into 4)
+% 3 column: boolean vector (0 scanning not required, 1 scanning required)
+% 4:7 columns: scanning positions relative to robot heading of column 2
+
+for i=1:nRobots
+
+ writematrix(cell2mat(final_tour(i)), num2str(i) + "_robot_tour.csv");
+
+end
 
 
 

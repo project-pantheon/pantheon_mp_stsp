@@ -17,6 +17,7 @@ function [edges_list, dist] = calculateEdgesList(stops_coord,nStops,grid)
     id1 = dist > max(grid(1),grid(2));
     dist(id1) = [];
     edges_list(id1,:) = [];
+   
 
 
 end

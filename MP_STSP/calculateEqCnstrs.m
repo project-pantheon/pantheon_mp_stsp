@@ -56,7 +56,7 @@ function [Aeq , beq] = calculateEqCnstrs(nRobots,nStops,edges_len,delta_plus,del
     for j=1:nRobots
         
         for i=required_vertex
-       
+            
             Aeq_f(i-1 +(j-1)*(nStops-1), 2*nRobots*robot_len+1+kk) = -1;
             kk = kk+1;
         
