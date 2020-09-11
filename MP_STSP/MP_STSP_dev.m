@@ -8,10 +8,10 @@ fname = 'Mission.json';
 val = jsondecode(fileread(fname));
 
 
-n_rows_trees = str2double( struct2array(val.field{1})); 
-n_cols_trees = str2double( struct2array(val.field{2})); 
-delta_rows = str2double( struct2array(val.field{3})); 
-delta_cols = str2double( struct2array(val.field{4}));
+n_rows_trees = str2double( table2array( struct2table(val.field{1}))); 
+n_cols_trees = str2double( table2array(struct2table(val.field{2}))); 
+delta_rows = str2double( table2array(struct2table(val.field{3}))); 
+delta_cols = str2double( table2array(struct2table(val.field{4})));
 
 trees_IDS_to_scan = str2double(struct2cell(val.trees));
 
