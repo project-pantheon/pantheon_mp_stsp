@@ -4,7 +4,8 @@ clc;
 
 %% Parse input file
 
-fname = 'Mission.json';
+%fname = 'Mission.json';
+fname = 'full_orchard_30x20.json';
 val = jsondecode(fileread(fname));
 
 
@@ -13,8 +14,11 @@ n_cols_trees = str2double( table2array(struct2table(val.field{2})));
 delta_rows = str2double( table2array(struct2table(val.field{3}))); 
 delta_cols = str2double( table2array(struct2table(val.field{4})));
 
-trees_IDS_to_scan = str2double(struct2cell(val.trees));
-
+if contains(fname, 'full_orchard')
+    trees_IDS_to_scan = linspace(1, n_rows_trees * n_cols_trees, n_rows_trees * n_cols_trees );
+else
+    trees_IDS_to_scan = str2double(struct2cell(val.trees));
+end
 nRobots = str2double(val.nrobots);
 
 
@@ -34,7 +38,7 @@ n_cols = n_cols_trees + 1;
 
 grid = [delta_rows, delta_cols];
 
-trees_IDS_to_scan = [1 6 5 10];
+%trees_IDS_to_scan = [1 6 5 10];
 
 [required_vertex, c_req, associations] = calculateStopsFromTreesIDs(trees_IDS_to_scan, n_cols);
 
@@ -54,7 +58,7 @@ nStops = n_rows * n_cols;
 X = zeros(nStops,1); 
 Y = X;
 
-%%
+%% Plot
 
 required_vertex = unique(required_vertex); %eliminates repetitions (if any)
 depot_indices = find(required_vertex == 1);
@@ -64,6 +68,8 @@ c_req(depot_indices) = [];
 nRequired = length(required_vertex);
 
 [XY,T] = plot_trees_and_points(nRobots,n_rows,n_cols,delta_rows,delta_cols,required_vertex);
+
+%% 
 
 %get single parameters vectors
 [edges_list, dist] = calculateEdgesList(XY,nStops,grid);
@@ -148,7 +154,7 @@ lb = spalloc(length(intcon),1,0);
 % lb = zeros(length(intcon),1);
 
 
-%% 
+%% Solve Optimization
 
 %impose flow at depot = nRequired (SHOULDNT BE REQUIRED-->DEBUG OTHERS)
 % Aeq_d = spalloc(1,solution_len,nRobots*4) ;
@@ -212,7 +218,7 @@ else
 
 end
 
-
+%% write solution
 % vir = round(x_tsp(nRobots*single_rob_len+1:end-1));
 
 segments = find(x_tsp); % Get indices of lines on optimal path
