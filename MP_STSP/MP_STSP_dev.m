@@ -184,8 +184,8 @@ else
     options.mip.limits.nodes = 100000;
 %     options.mip.strategy.search = 3;
 %     options.mip.strategy.search = 1; %1 branch&cut ---> search other approaches
-%     options.mip.tolerances.absmipgap = 1;
-%     options.mip.tolerances.mipgap = 0.001;
+    options.mip.tolerances.absmipgap = 1;
+    options.mip.tolerances.mipgap = 10;
     options.mip
   
     
