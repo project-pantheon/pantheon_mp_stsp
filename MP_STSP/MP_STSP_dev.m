@@ -5,8 +5,13 @@ clc;
 %% Parse input file
 
 %fname = 'Mission.json';
-fname = 'full_orchard_30x20.json';
+fname = 'Mission.json';
+%fname = 'full_orchard_30x20.json';
 val = jsondecode(fileread(fname));
+
+
+mipgap_=.15;
+%con mingap_=10 dopo 1 ora e mezza resta al 10.97 con 70 soluzioni,
 
 
 n_rows_trees = str2double( table2array( struct2table(val.field{1}))); 
@@ -14,14 +19,16 @@ n_cols_trees = str2double( table2array(struct2table(val.field{2})));
 delta_rows = str2double( table2array(struct2table(val.field{3}))); 
 delta_cols = str2double( table2array(struct2table(val.field{4})));
 
-if contains(fname, 'full_orchard')
+full_trees=str2num( val.full_trees); % if full mode is set, all ids will be ignored
+
+if full_trees
     trees_IDS_to_scan = linspace(1, n_rows_trees * n_cols_trees, n_rows_trees * n_cols_trees );
 else
     trees_IDS_to_scan = str2double(struct2cell(val.trees));
 end
 nRobots = str2double(val.nrobots);
 
-
+time_mp_stsp=tic;
 
 %%
 
@@ -185,7 +192,7 @@ else
 %     options.mip.strategy.search = 3;
 %     options.mip.strategy.search = 1; %1 branch&cut ---> search other approaches
     options.mip.tolerances.absmipgap = 1;
-    options.mip.tolerances.mipgap = 10;
+    options.mip.tolerances.mipgap = mipgap_;
     options.mip
   
     
@@ -266,6 +273,8 @@ for i=1:length(edges_list)
     fprintf(fileID,'(%d, %d),\n', edges_list(i,1)-1,edges_list(i,2)-1);
 end
 fclose(fileID);
+
+time_mp_stsp_tot=toc(time_mp_stsp)
 
 % Final tour is composed as:
 % 1 column: path consisting into all the stops the i-th robot has to do

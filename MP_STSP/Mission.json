@@ -1,12 +1,12 @@
 {
-	"nrobots": "2",
+	"nrobots": "3",
 
 	"field": [
 	{
 		"trees_rows" : "4"
 		},
 	{
-		"trees_cols" : "3"
+		"trees_cols" : "4"
 		},
 	{
 		"delta_rows" : "5"
@@ -15,10 +15,7 @@
 		"delta_cols" : "5"
 		}
 
-     ]
-
-,
-
+     ],
 
 	"trees": [
         {
@@ -36,5 +33,6 @@
         {
             "id": "10"
         }
-    ]
+    ],
+    "full_trees": "1"
 }
