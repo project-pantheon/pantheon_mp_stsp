@@ -36,7 +36,7 @@ function [A , b] = calculateNEqCnstrs(nRobots,nStops,edges_len,delta_plus,requir
 
     for i=1:edges_len
     
-        A_f_bound(i,i) = -(nRequired-1); %depots
+        A_f_bound(i,i) = -(nRequired); %depots
         A_f_bound(i,i + edges_len) = 1;
             
     end

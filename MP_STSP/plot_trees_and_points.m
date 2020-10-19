@@ -25,6 +25,8 @@ function [XY,T] = plot_trees_and_points(nRobots,n_r,n_c,d_r,d_c,required_vertex)
      y_trees = y_trees + d_r/2; 
      T = [reshape(x_trees',[(n_r-1)*(n_c-1) 1]) reshape(y_trees',[(n_r-1)*(n_c-1) 1])];
      
+     depot = [-5 -5];
+     XY = [depot;XY];
      
     for kk=1:nRobots+1 %why is n+1 here?
         

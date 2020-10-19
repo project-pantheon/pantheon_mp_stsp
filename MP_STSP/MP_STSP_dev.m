@@ -30,6 +30,7 @@ else
 end
 nRobots = str2double(val.nrobots);
 
+
 %%
 
 which_solver = 2; %1 for intlinprog, 2 for cplexmilp 
@@ -49,7 +50,6 @@ grid = [delta_rows, delta_cols];
 
 [required_vertex, c_req, associations] = calculateStopsFromTreesIDs(trees_IDS_to_scan, n_cols);
 
-
 Tmax_cost = 10; %if we push too much the time, the robots tend to split exactly the number of required nodes
 
 if nRobots == 1 %single robot Tcapture has no role
@@ -61,6 +61,9 @@ end
 c1 = 40; %single stop cost
 c2 = 5; %traverse edge cost
 
+c_req = 40*[c_req];
+required_vertex = 1+[required_vertex];
+
 nStops = n_rows * n_cols;
 X = zeros(nStops,1); 
 Y = X;
@@ -68,9 +71,9 @@ Y = X;
 %% Plot
 
 required_vertex = unique(required_vertex); %eliminates repetitions (if any)
-depot_indices = find(required_vertex == 1);
-required_vertex(depot_indices) = [];%take out depot if present
-c_req(depot_indices) = [];
+%depot_indices = find(required_vertex == 1);
+%required_vertex(depot_indices) = [];%take out depot if present
+%c_req(depot_indices) = [];
 
 nRequired = length(required_vertex);
 
@@ -79,9 +82,20 @@ nRequired = length(required_vertex);
 %% 
 
 %get single parameters vectors
-[edges_list, dist] = calculateEdgesList(XY,nStops,grid);
+[edges_list, dist] = calculateEdgesList(XY,nStops+1,grid);
 
-[delta_plus , delta_minus, Fa] = calculateFlowVariables(nStops,edges_list);
+edges_len = length(edges_list);
+
+%add depot 
+depot_edges=[1 2];
+rev_dep_edges=[2 1];
+depot_cost = zeros(size(depot_edges,1),1);
+dist = [depot_cost ;dist(1:edges_len/2,:);depot_cost; dist(edges_len/2+1:end,:)];
+edges_list = [depot_edges ;edges_list(1:edges_len/2,:); rev_dep_edges ;edges_list(edges_len/2+1:end,:)];
+
+
+
+[delta_plus , delta_minus, Fa] = calculateFlowVariables(nStops+1,edges_list);
 
 V = calculateSplitVariables(nRequired);
 

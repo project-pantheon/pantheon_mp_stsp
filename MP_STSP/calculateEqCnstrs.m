@@ -39,13 +39,13 @@ function [Aeq , beq] = calculateEqCnstrs(nRobots,nStops,edges_len,delta_plus,del
     %TO PARAMETRIZE
 
     
-    Aeq_f = spalloc(nRobots*(nStops-1),sol_len,2*edges_len + nRobots*nRequired-nRobots*4); %depot will always have 2+2 edges (thus the 4)
+    Aeq_f = spalloc(nRobots*(nStops),sol_len,2*edges_len + nRobots*nRequired-nRobots*4); %depot will always have 2+2 edges (thus the 4)
     
     for j=1:nRobots
         
-        for i=1:nStops-1
+        for i=1:nStops
         
-        Aeq_f(i+(j-1)*(nStops-1),edges_len+(j-1)*robot_len+1:edges_len+j*robot_len) = ( delta_minus{i+1} - delta_plus{i+1} )'; %avoids depot (at 1)
+        Aeq_f(i+(j-1)*(nStops),edges_len+(j-1)*robot_len+1:edges_len+j*robot_len) = ( delta_minus{i+1} - delta_plus{i+1} )'; %avoids depot (at 1)
         
         end
         
@@ -57,14 +57,14 @@ function [Aeq , beq] = calculateEqCnstrs(nRobots,nStops,edges_len,delta_plus,del
         
         for i=required_vertex
             
-            Aeq_f(i-1 +(j-1)*(nStops-1), 2*nRobots*robot_len+1+kk) = -1;
+            Aeq_f(i-1 +(j-1)*(nStops), 2*nRobots*robot_len+1+kk) = -1;
             kk = kk+1;
         
         end
         
     end
     
-    beq_f = spalloc(nRobots*(nStops-1) ,1 , 0);
+    beq_f = spalloc(nRobots*(nStops) ,1 , 0);
 
 %     beq_f = zeros( nRobots*(nStops-1) ,1);
     
