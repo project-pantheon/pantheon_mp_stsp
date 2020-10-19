@@ -16,7 +16,7 @@ while 1
     copyfile(path_mission,"Mission.json")
     
     %run algorithm
-    %MP_STSP_dev
+    MP_STSP_dev
     
     % update data
     fname = 'exp_set/Set.json';
