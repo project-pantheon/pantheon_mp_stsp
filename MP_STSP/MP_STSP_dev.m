@@ -2,6 +2,8 @@ clear all;
 close all;
 clc;
 
+%addpath('/opt/ibm/ILOG/CPLEX_Studio1210/cplex/matlab/x86-64_linux')
+
 %% Parse input file
 
 %fname = 'Mission.json';
@@ -27,8 +29,6 @@ else
     trees_IDS_to_scan = str2double(struct2cell(val.trees));
 end
 nRobots = str2double(val.nrobots);
-
-time_mp_stsp=tic;
 
 %%
 
@@ -273,8 +273,6 @@ for i=1:length(edges_list)
     fprintf(fileID,'(%d, %d),\n', edges_list(i,1)-1,edges_list(i,2)-1);
 end
 fclose(fileID);
-
-time_mp_stsp_tot=toc(time_mp_stsp)
 
 % Final tour is composed as:
 % 1 column: path consisting into all the stops the i-th robot has to do
