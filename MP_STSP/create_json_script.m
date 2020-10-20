@@ -6,8 +6,8 @@ instances=10;
 %nrobots = 3;
 %trees_rows=8;
 %trees_cols=8;
-delta_rows=5;
-delta_cols=5;
+delta_rows="5";
+delta_cols="5.0001";
 
 factors_str=["1_4","2_4","3_4","4_4"];
 factors=    [ 1/4 , 2/4 , 3/4 , 4/4 ];

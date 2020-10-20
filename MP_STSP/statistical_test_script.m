@@ -25,7 +25,10 @@ while 1
     status_struct = jsondecode(fileread(fname));
     
     path_data=sprintf("%s/M%d",set_struct.set{status_struct.set_status},status_struct.status);
-    save(path_data)
+    
+    if solution_found
+        save(path_data)
+    end
     
     if status_struct.status+1 > status_struct.max
         status_struct.status = 1;
