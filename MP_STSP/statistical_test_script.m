@@ -2,6 +2,8 @@ clear all
 close all
 clc
 
+addpath('/opt/ibm/ILOG/CPLEX_Studio1210/cplex/matlab/x86-64_linux')
+
 while 1
     
     % update data

@@ -7,7 +7,8 @@ clc;
 
 solution_found = 0;
 solution_errors = 0;
-mipgap_=.05;
+mipgap_=.50;
+offset_=0;
 
 while ~solution_found && ~solution_errors
     
@@ -25,6 +26,8 @@ while ~solution_found && ~solution_errors
         n_cols_trees = str2double( table2array(struct2table(val.field{2})));
         delta_rows = str2double( table2array(struct2table(val.field{3})));
         delta_cols = str2double( table2array(struct2table(val.field{4})));
+        
+        delta_cols = delta_cols - offset_;
         
         full_trees=str2num( val.full_trees); % if full mode is set, all ids will be ignored
         
@@ -239,7 +242,7 @@ while ~solution_found && ~solution_errors
             %OPTIMIZATION POSSIBLES: SOSvariables (i vri che sono mutualmente
             %esclusivi)
             %UPPER BOUNDS PER TUTTI
-            
+            pause(5)
             [x_tsp, fval, exitflag, output] = cplexmilp(cost_fun, A, b, Aeq, beq, [],[],[], lb, [], ctype,[], options);
             
         end
@@ -309,9 +312,16 @@ while ~solution_found && ~solution_errors
         solution_found = 1
     catch
         %if solver generates some errors, the mingap will be scale by 10%
-        mipgap_=mipgap_*0.9
-        if (mipgap_ < 0.03)
-            solution_errors = 1
+        %or it will be introduced an offset on one delta
+        if offset_~= 0
+            offset_= 0
+            mipgap_=mipgap_*0.9
+
+            if (mipgap_ < 0.03)
+                solution_errors = 1
+            end
+        else
+            offset_=.0001
         end
     end
     
