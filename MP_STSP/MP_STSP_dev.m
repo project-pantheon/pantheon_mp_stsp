@@ -7,7 +7,7 @@ clc;
 
 solution_found = 0;
 solution_errors = 0;
-mipgap_=.50;
+mipgap_=.04;
 offset_=0;
 
 while ~solution_found && ~solution_errors
@@ -317,7 +317,7 @@ while ~solution_found && ~solution_errors
             offset_= 0
             mipgap_=mipgap_*0.9
 
-            if (mipgap_ < 0.03)
+            if (mipgap_ < 0.01)
                 solution_errors = 1
             end
         else
