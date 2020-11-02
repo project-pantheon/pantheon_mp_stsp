@@ -7,7 +7,7 @@ clc;
 
 solution_found = 0;
 solution_errors = 0;
-mipgap_=.04;
+mipgap_=.01;
 offset_=0;
 
 while ~solution_found && ~solution_errors
@@ -271,7 +271,8 @@ while ~solution_found && ~solution_errors
             
             tour{i} = findTour(sol_edges{i},required_vertex,Vri);
             
-            T_tot(i) = calculateFinalTime(x_tsp((i-1)*edges_len/nRobots +1:i*edges_len/nRobots),Vri,required_vertex,c_req);
+            %T_tot(i) = calculateFinalTime(x_tsp((i-1)*edges_len/nRobots +1:i*edges_len/nRobots),Vri,required_vertex,c_req);
+            T_tot(i) = calculateFinalTime(tour{i},Vri,required_vertex,c_req);
             fprintf(2,'Total time for robot # %i\n',i);
             fprintf(2,'%i [sec]\n' , T_tot(i));
             
