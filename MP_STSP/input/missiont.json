@@ -1,0 +1,16 @@
+{
+    "id_mission_base": "M_2021-06-16_12-25-25__Field_16",
+    "nrobots ": 1,
+    "tasks": [
+        "Tree_Geometry_Reconstruction",
+        "Fruit_Detection",
+        "Pruning"
+    ],
+    "planned_date":"2021-06-15T22:00:00.000+00:00",
+    "maps_config_id": "MapTest",
+    "location": "Field_16",
+    "targets": ["Yo_F3", "Yo_F6", "Yo_F7"],
+    "full_trees":0,
+    "phenology": "",
+    "chemical_products": ""
+}

@@ -17,7 +17,7 @@ function final_tour = calculateScanningHeading(tour, associations, stops_IDs, tr
               index = find(associations(j,2:end) == tour(i,1));
 
               if ~isempty(index)
-                trees_to_scan = [trees_to_scan;associations(j,1)];
+                trees_to_scan = [trees_to_scan;associations(j,1)-1];
                 related_stops = [related_stops;tour(i,1)];
               end
           
@@ -30,7 +30,7 @@ function final_tour = calculateScanningHeading(tour, associations, stops_IDs, tr
     final_associations = [related_stops trees_to_scan ];
   
     
-    stops_flags = zeros(length(tour),4);
+    stops_flags = zeros(size(tour,1),4);
     
     for i=1:size(final_associations,1)
         

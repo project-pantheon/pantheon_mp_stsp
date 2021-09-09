@@ -113,6 +113,10 @@ while ~solution_found && ~solution_errors
         
         [XY,T] = plot_trees_and_points(nRobots,n_rows,n_cols,delta_rows,delta_cols,required_vertex);
         
+        %UTM trasnformation
+        %[x,y,zone] = ll2utm(lat,lon)
+        
+        
         %%
         
         %get single parameters vectors
