@@ -38,11 +38,11 @@
     {
         "id": "MapTest",
         "field": {
-            "delta_rows": 5,
-            "delta_cols": 5,
+            "delta_rows": 4.479066,
+            "delta_cols": 3.067904,
             "trees_cols": 18,
             "trees_rows": 1,
-            "orientation": 0.03
+            "orientation": 0.06464906
         },
         "map_file": "MapTest.csv",
         "mapping": "MapTestTrees.csv"

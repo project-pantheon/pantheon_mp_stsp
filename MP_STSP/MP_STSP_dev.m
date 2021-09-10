@@ -34,6 +34,10 @@ while ~solution_found && ~solution_errors
             i=i+1;
         end
         
+        %Map
+        map_file = "input/"+ valmap(map_index).map_file;
+        orientation = valmap(map_index).field.orientation;
+        
         %Trees
         fname = "input/"+ valmap(map_index).mapping;
         val_tab_trees = readtable(fname);
@@ -110,14 +114,15 @@ while ~solution_found && ~solution_errors
         %c_req(depot_indices) = [];
         
         nRequired = length(required_vertex);
-        
-        [XY,T] = plot_trees_and_points(nRobots,n_rows,n_cols,delta_rows,delta_cols,required_vertex);
+                
+        %[XY,T] = plot_trees_and_points(nRobots,n_rows,n_cols,delta_rows,delta_cols,required_vertex);
+        [XY,T, origin_utm] = plot_trees_and_points_from_file(map_file,orientation,nRobots,n_rows,n_cols,delta_rows,delta_cols,required_vertex);
         
         %%
         
         %get single parameters vectors
         [edges_list, dist] = calculateEdgesList(XY,nStops+1,grid);
-        
+        %edges_list_r
         edges_len = length(edges_list);
         
         %add depot
@@ -320,6 +325,16 @@ while ~solution_found && ~solution_errors
             figure(i)
             scatter(final_stops_IDs{i}(size(XY_with_IDs_temp,1)-new_waypoints+1:end,2),final_stops_IDs{i}(size(XY_with_IDs_temp,1)-new_waypoints+1:end,3),100,'o','filled','g')
         end
+        
+        
+        for i=1:nRobots
+            for j=1:size(final_stops_IDs{i},1)
+                temp=rotz(rad2deg(orientation))*[final_stops_IDs{i}(j,2:3) 0]'+[origin_utm'; 0];
+                final_stops_IDs{i}(j,2:3)= utm2ll(temp(1),temp(2),33);
+            end
+        end
+        
+        
         
         %% Write solution files
         

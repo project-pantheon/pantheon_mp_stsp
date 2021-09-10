@@ -1,5 +1,6 @@
 function [edges_list, dist] = calculateEdgesList(stops_coord,nStops,grid)
 
+    threshold=0.3;% m
 
     X = stops_coord(:,1);
     Y = stops_coord(:,2);
@@ -14,7 +15,7 @@ function [edges_list, dist] = calculateEdgesList(stops_coord,nStops,grid)
              
             
 
-    id1 = dist > max(grid(1),grid(2));
+    id1 = dist > max(grid(1)+threshold,grid(2)+threshold);
     dist(id1) = [];
     edges_list(id1,:) = [];
    
